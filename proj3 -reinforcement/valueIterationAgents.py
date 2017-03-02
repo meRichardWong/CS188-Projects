@@ -64,6 +64,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         "*** YOUR CODE HERE ***"
 
         for x in range(0, self.iterations):
+          #create a copy so we dont calculate in the same step incorrectly
           boardValues = self.values.copy()
           for states in self.mdp.getStates():
 
@@ -80,6 +81,7 @@ class ValueIterationAgent(ValueEstimationAgent):
                 for nextState, prob in self.mdp.getTransitionStatesAndProbs(states, possibleActions):
 
                   # Q* [Q VALUE]: (s,a) = T(s,a,s') * [(R(s,a,s') + (Discount * V*(s')]
+                  # use original self.value to update calculations, then make self.value the copy
                   value += prob * (self.mdp.getReward(states, possibleActions, nextState) + (self.discount*self.values[nextState]))
 
                 # V*(s) = max(Q*(s,a))
@@ -89,8 +91,6 @@ class ValueIterationAgent(ValueEstimationAgent):
               boardValues[states] = maxValue
 
           self.values = boardValues
-          print self.values
-
 
     def getValue(self, state):
         """
