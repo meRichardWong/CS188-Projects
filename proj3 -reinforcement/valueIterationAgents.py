@@ -178,8 +178,40 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
         """
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
+
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
+
+        for x in range(0, self.iterations):
+          #create a copy so we dont calculate in the same step incorrectly
+          boardValues = self.values.copy()
+          listStates = self.mdp.getStates()
+          i = x % len(listStates)
+          states = listStates[i]
+
+          if self.mdp.isTerminal(states):
+            continue
+          else:
+
+            maxValue = -999999
+
+            for possibleActions in self.mdp.getPossibleActions(states):
+
+              value = 0
+
+              for nextState, prob in self.mdp.getTransitionStatesAndProbs(states, possibleActions):
+
+                # Q* [Q VALUE]: (s,a) = T(s,a,s') * [(R(s,a,s') + (Discount * V*(s')]
+                # use original self.value to update calculations, then make self.value the copy
+                value += prob * (self.mdp.getReward(states, possibleActions, nextState) + (self.discount*self.values[nextState]))
+
+              # V*(s) = max(Q*(s,a))
+              maxValue = max(value, maxValue)
+
+            # Then, assign V*(s) to board
+            boardValues[states] = maxValue
+
+          self.values = boardValues
 
 class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     """
