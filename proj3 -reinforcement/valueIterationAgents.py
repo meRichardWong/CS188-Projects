@@ -63,10 +63,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
 
-        boardValues = util.Counter()
-
         for x in range(0, self.iterations):
-
+          boardValues = self.values.copy()
           for states in self.mdp.getStates():
 
             if self.mdp.isTerminal(states):
@@ -82,7 +80,7 @@ class ValueIterationAgent(ValueEstimationAgent):
                 for nextState, prob in self.mdp.getTransitionStatesAndProbs(states, possibleActions):
 
                   # Q* [Q VALUE]: (s,a) = T(s,a,s') * [(R(s,a,s') + (Discount * V*(s')]
-                  value += prob * (self.mdp.getReward(states, possibleActions, nextState) + (self.discount*boardValues[nextState]))
+                  value += prob * (self.mdp.getReward(states, possibleActions, nextState) + (self.discount*self.values[nextState]))
 
                 # V*(s) = max(Q*(s,a))
                 maxValue = max(value, maxValue)
@@ -91,12 +89,13 @@ class ValueIterationAgent(ValueEstimationAgent):
               boardValues[states] = maxValue
 
           self.values = boardValues
+          print self.values
 
 
     def getValue(self, state):
         """
           Return the value of the state (computed in __init__).
-        """
+        """ 
         return self.values[state]
 
 
