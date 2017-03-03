@@ -132,7 +132,6 @@ class ValueIterationAgent(ValueEstimationAgent):
         for possibleActions in self.mdp.getPossibleActions(state):
           if self.mdp.isTerminal(state):
             return None
-
           else:
             QValue = self.computeQValueFromValues(state, possibleActions)
             if QValue >= tempValue:
@@ -233,3 +232,24 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
 
+        listStates = self.mdp.getStates()
+
+        #compute predecessors of a state s. 
+
+        priorityStatesQueue = util.PriorityQueue()
+
+        for states in self.mdp.getStates():
+          if self.mdp.isTerminal(states)
+            continue: #ignore the terminal states 
+          else:
+
+        for x in range(0, self.iterations):
+
+          state = priorityStatesQueue.pop()
+
+          if priorityStatesQueue.isEmpty():
+            break
+          else:
+            #INSERT CODE Update s's value (if it is not a terminal state) in self.values.
+            for predecessor in statePredecessors:
+              
