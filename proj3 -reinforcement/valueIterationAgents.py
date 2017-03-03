@@ -229,27 +229,52 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
         self.theta = theta
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
+
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
 
-        listStates = self.mdp.getStates()
+        #returns the highest Q Value across all possible actions from s
+        def highestQAction(state):
+          return max(self.getQValue(state, possibleActions) for possibleActions in self.mdp.getPossibleActions(state))
 
-        #compute predecessors of a state s. 
+        #compute predecessors of a state s.
+        predecessors = {}
 
+        for state in self.mdp.getStates():
+          for action in self.mdp.getPossibleActions(state):
+            for nextState, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+              if nextState in predecessors:
+                predecessors[nextState].add(state) #if key is already in our dictionary, add previous states to set
+              else:
+                predecessors[nextState] = set([state]) #else, create a new key 
+
+
+        #initialize an empty priority queue
         priorityStatesQueue = util.PriorityQueue()
 
+
+        #STEP 1
         for states in self.mdp.getStates():
-          if self.mdp.isTerminal(states)
-            continue: #ignore the terminal states 
-          else:
+          if not self.mdp.isTerminal(states): #ignore terminal states 
+            diff = abs(self.values[states] - highestQAction(states))
+            priorityStatesQueue.update(states, -diff)
 
+
+        #STEP 2
         for x in range(0, self.iterations):
-
-          state = priorityStatesQueue.pop()
-
           if priorityStatesQueue.isEmpty():
-            break
-          else:
-            #INSERT CODE Update s's value (if it is not a terminal state) in self.values.
-            for predecessor in statePredecessors:
-              
+            return
+
+          poppedState = priorityStatesQueue.pop()
+
+          if not self.mdp.isTerminal(poppedState):#Update s's value (if it is not a terminal state) in self.values.
+            self.values[poppedState] = highestQAction(poppedState) #get the highest Q action of the poppedState
+
+          for pred in predecessors[poppedState]:
+            diff = abs(self.values[pred] - highestQAction(pred))
+
+            if diff > self.theta:
+              priorityStatesQueue.update(pred, -diff)
+
+
+            
