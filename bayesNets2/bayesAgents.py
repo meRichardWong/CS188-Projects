@@ -223,6 +223,15 @@ def fillObsCPT(bayesNet, gameState):
     house and ghost house are assigned to the same cell.
     """
 
+
+        "*** YOUR CODE HERE ***"
+
+    def compare(list1, list2):
+        for val in list1:
+            for val2 in list2:
+                if val == val2:
+                    prob varProbability = 
+
     bottomLeftPos, topLeftPos, bottomRightPos, topRightPos = gameState.getPossibleHouses()
 
     #HOUSE_VALS = [TOP_LEFT_VAL, TOP_RIGHT_VAL, BOTTOM_LEFT_VAL, BOTTOM_RIGHT_VAL]
@@ -237,8 +246,9 @@ def fillObsCPT(bayesNet, gameState):
             for assignment in factor.getAllPossibleAssignmentDicts():
 
                 for houseVals in HOUSE_VALS:
-                    varProbability = 0 
 
+                    varProbability = 0
+                    
                     if assignment[FOOD_HOUSE_VAR] == houseVals:
                         if assignment[obsVar] == RED_OBS_VAL:
                             varProbability = PROB_FOOD_RED
@@ -253,7 +263,7 @@ def fillObsCPT(bayesNet, gameState):
 
                     else:
                         if assignment[obsVar] == NO_OBS_VAL:
-                            varProbability = 1      
+                            varProbability = 1  
 
                     factor.setProbability(assignment, varProbability)
 
