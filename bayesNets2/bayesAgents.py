@@ -247,16 +247,16 @@ def fillObsCPT(bayesNet, gameState):
 
                     elif assignment[GHOST_HOUSE_VAR] == houseVals:
                         if assignment[obsVar] == RED_OBS_VAL:
-                            varProbability = PROB_FOOD_RED
+                            varProbability = PROB_GHOST_RED
                         elif assignment[obsVar] == BLUE_OBS_VAL:
-                            varProbability = 1 - PROB_FOOD_RED
+                            varProbability = 1 - PROB_GHOST_RED
 
                     else:
                         if assignment[obsVar] == NO_OBS_VAL:
                             varProbability = 1      
 
                     factor.setProbability(assignment, varProbability)
-                    
+
             bayesNet.setCPT(obsVar, factor)
 
 
