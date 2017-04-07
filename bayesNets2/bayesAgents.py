@@ -224,50 +224,43 @@ def fillObsCPT(bayesNet, gameState):
     """
 
 
-        "*** YOUR CODE HERE ***"
-
-    def compare(list1, list2):
-        for val in list1:
-            for val2 in list2:
-                if val == val2:
-                    prob varProbability = 
+    "*** YOUR CODE HERE ***"
 
     bottomLeftPos, topLeftPos, bottomRightPos, topRightPos = gameState.getPossibleHouses()
 
     #HOUSE_VALS = [TOP_LEFT_VAL, TOP_RIGHT_VAL, BOTTOM_LEFT_VAL, BOTTOM_RIGHT_VAL]
 
-    for housePos in gameState.getPossibleHouses():
-        for obsPos in gameState.getHouseWalls(housePos):
-            obsVar = OBS_VAR_TEMPLATE % obsPos
+    # for housePos in gameState.getPossibleHouses():
+    #     for obsPos in gameState.getHouseWalls(housePos):
+    #         obsVar = OBS_VAR_TEMPLATE % obsPos
 
-            factor = bn.Factor([obsVar], [FOOD_HOUSE_VAR, GHOST_HOUSE_VAR], bayesNet.variableDomainsDict())
+    #         factor = bn.Factor([obsVar], [FOOD_HOUSE_VAR, GHOST_HOUSE_VAR], bayesNet.variableDomainsDict())
 
-            #Looking for:  [BOTTOM_LEFT_VAL, TOP_LEFT_VAL, BOTTOM_RIGHT_VAL, TOP_RIGHT_VAL]
-            for assignment in factor.getAllPossibleAssignmentDicts():
+    #         #Looking for:  [BOTTOM_LEFT_VAL, TOP_LEFT_VAL, BOTTOM_RIGHT_VAL, TOP_RIGHT_VAL]
+    #         for assignment in factor.getAllPossibleAssignmentDicts():
 
-                for houseVals in HOUSE_VALS:
+    #             for houseVals in HOUSE_VALS:
 
-                    varProbability = 0
+    #                 varProbability = 0
+    #                 if assignment[GHOST_HOUSE_VAR] == houseVals:
+    #                     if assignment[obsVar] == RED_OBS_VAL:
+    #                         varProbability = PROB_GHOST_RED
+    #                     elif assignment[obsVar] == BLUE_OBS_VAL:
+    #                         varProbability = 1 - PROB_GHOST_RED
+
+    #                 elif assignment[FOOD_HOUSE_VAR] == houseVals:
+    #                     if assignment[obsVar] == RED_OBS_VAL:
+    #                         varProbability = PROB_FOOD_RED
+    #                     elif assignment[obsVar] == BLUE_OBS_VAL:
+    #                         varProbability = 1 - PROB_FOOD_RED
                     
-                    if assignment[FOOD_HOUSE_VAR] == houseVals:
-                        if assignment[obsVar] == RED_OBS_VAL:
-                            varProbability = PROB_FOOD_RED
-                        elif assignment[obsVar] == BLUE_OBS_VAL:
-                            varProbability = 1 - PROB_FOOD_RED
+    #                 else:
+    #                     if assignment[obsVar] == NO_OBS_VAL:
+    #                         varProbability = 1  
 
-                    elif assignment[GHOST_HOUSE_VAR] == houseVals:
-                        if assignment[obsVar] == RED_OBS_VAL:
-                            varProbability = PROB_GHOST_RED
-                        elif assignment[obsVar] == BLUE_OBS_VAL:
-                            varProbability = 1 - PROB_GHOST_RED
+    #                 factor.setProbability(assignment, varProbability)
 
-                    else:
-                        if assignment[obsVar] == NO_OBS_VAL:
-                            varProbability = 1  
-
-                    factor.setProbability(assignment, varProbability)
-
-            bayesNet.setCPT(obsVar, factor)
+    #         bayesNet.setCPT(obsVar, factor)
 
 
 
