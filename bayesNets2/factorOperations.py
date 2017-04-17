@@ -102,7 +102,27 @@ def joinFactors(factors):
 
     "*** YOUR CODE HERE ***"
 
-    
+    def joinFactors(left_factor, right_factor):
+
+        unconditionedLeft = left_factor.unconditionedVariables()
+        unconditionedRight = right_factor.unconditionedVariables()
+        conditionedLeft = left_factor.conditionedVariables()
+        conditionedRight = right_factor.conditionedVariables()
+
+        unconditionedUnionLeft = set.union(unconditionedLeft, unconditionedRight)
+        conditionedUnionRight = set.union(conditionedLeft, conditionedRight)
+
+        newLeftFactor = set.union(unconditionedLeft, unconditionedRight)
+        differenceRight = set.difference(set.union(conditionedUnionRight), newLeftFactor)
+        newRightFactor = differenceRight
+
+        freshFactor = Factor(newLeftFactor, newRightFactor, left_factor.variableDomainsDict())
+
+        for row in freshFactor.getAllPossibleAssignmentDicts():
+            freshFactor.setProbability(row, left_factor.getProbability(row)*right_factor.getProbability(row))
+        return freshFactor
+
+    return reduce(joinFactors, factors)  
 
 def eliminateWithCallTracking(callTrackingList=None):
 
@@ -149,8 +169,23 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "eliminationVariable:" + str(eliminationVariable) + "\n" +\
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        oldUnconditionedVariables = factor.unconditionedVariables()
+        oldUnconditionedVariables.remove(eliminationVariable)
+
+        newUnconditionedList = []
+        for item in oldUnconditionedVariables:
+            newUnconditionedList.append(item)
+
+        freshFactor = Factor(newUnconditionedList, factor.conditionedVariables(), factor.variableDomainsDict())
+
+        for row in factor.getAllPossibleAssignmentDicts():
+            itemProb = factor.getProbability(row)
+            row.pop(eliminationVariable)
+            currProb = freshFactor.getProbability(row)
+            totalProb = itemProb + currProb
+            freshFactor.setProbability(row, totalProb)
+        return freshFactor
 
     return eliminate
 
@@ -205,5 +240,35 @@ def normalize(factor):
                             str(factor))
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    probSum = 0.0
+    probDistSum = []
+
+    unconditionedVariables = set()
+    conditionedVariables = set()
+    oneSumEntries = []
+
+    #add the existing conditioned variables to our new set() of conditioned variable
+    for variable in factor.conditionedVariables():
+        conditionedVariables.add(variable)
+
+    #now, we include the the variables that are equal to 1, then add that to our set() above of conditioned variables
+    for variable in factor.unconditionedVariables():
+        if len(variableDomainsDict[variable]) == 1:
+            conditionedVariables.add(variable)
+            oneSumEntries.append(variable)
+
+    #for the remaining variables that ARE NOT conditioned (i.e. not equal to 1), add those to our new set() of unconditioned Variables 
+    for variable in factor.unconditionedVariables():
+        if variable not in oneSumEntries:
+            unconditionedVariables.add(variable)
+
+    freshFactor = Factor(unconditionedVariables, conditionedVariables, variableDomainsDict)
+
+    for row in freshFactor.getAllPossibleAssignmentDicts():
+        probSum += factor.getProbability(row)
+    for row in freshFactor.getAllPossibleAssignmentDicts() :   
+        newProb = factor.getProbability(row) / probSum
+        freshFactor.setProbability(row, newProb)
+    return freshFactor
 
