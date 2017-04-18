@@ -143,32 +143,13 @@ class GreedyBustersAgent(BustersAgent):
         livingGhostPositionDistributions = \
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
+             
         "*** Q4 ***"
-
-
-        # min = None
-        # for livingGhostPositionDistribution in livingGhostPositionDistributions:
-        #     mostLikelyPosition = livingGhostPositionDistribution.argMax()
-        #     distance = self.distancer.getDistance(pacmanPosition, mostLikelyPosition)
-        #     if (not min) or (distance < min):
-        #         min = distance
-        #         closestPosition = mostLikelyPosition
-
-
-        # min = None
-        # for legalAction in legal:
-        #     newPosition = Actions.getSuccessor(pacmanPosition, legalAction)
-        #     distanceAfterAction = self.distancer.getDistance(newPosition, closestPosition)
-        #     if not min or distanceAfterAction < min:
-        #         min = distanceAfterAction
-        #         bestAction = legalAction
-
-        # return bestAction
 
         closestGhostPosition = None
         minGhostDist = 999999
 
-        for belief in livingGhostPositionDistributions
+        for belief in livingGhostPositionDistributions:
             # Return the key with the highest value.
             mostLikelyGhostPosition = belief.argMax()
             distance = self.distancer.getDistance(pacmanPosition, mostLikelyGhostPosition)
@@ -179,24 +160,15 @@ class GreedyBustersAgent(BustersAgent):
 
 
         bestAction = None
+        minGhostDist = 999999
+
+        for legalAction in legal:
+            successorAction = Actions.getSuccessor(pacmanPosition, legalAction)
+            distance = self.distancer.getDistance(successorAction, mostLikelyGhostPosition)
+
+            if distance < minGhostDist:
+                minGhostDist = distance
+                bestAction = legalAction
 
 
-
-
-        # localMax = []
-
-        # for belief in livingGhostPositionDistributions:
-        #     localMax.append(belief.argMax())
-
-        # goalCoordinate, goalProbability = None, 0
-
-        # for index, coordinate in enumerate(localMax):
-        #     if livingGhostPositionDistributions[index][coordinate] >= goalProbability:
-        #         goalCoordinate, goalProbability = coordinate, livingGhostPositionDistributions[index][coordinate]
-
-
-        # temp = []
-        # for action in legal:
-        #     nextLocation = Actions.getSuccessor(pacmanPosition, action)
-        #     temp.append((self.distancer.getDistance(nextLocation, goalCoordinate), action))
-        # return min(temp)[1]
+        return bestAction

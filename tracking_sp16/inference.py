@@ -74,14 +74,13 @@ class DiscreteDistribution(dict):
         >>> empty
         {}
         """
-        "*** YOUR CODE HERE ***"
+        "*** Q0A ***"
 
         total = self.total()
 
         if total != 0:
             for key in self.keys():
                 self[key] = self[key]/total
-
 
 
 
@@ -106,7 +105,7 @@ class DiscreteDistribution(dict):
         >>> round(samples.count('d') * 1.0/N, 1)
         0.0
         """
-        "*** YOUR CODE HERE ***"
+        "*** Q0B ***"
 
         total = self.total()
 
@@ -383,8 +382,35 @@ class ParticleFilter(InferenceModule):
         distributed across positions in order to ensure a uniform prior. Use
         self.particles for the list of particles.
         """
+        "*** Q5A***"
+
         self.particles = []
-        "*** YOUR CODE HERE ***"
+        count = 0
+
+        while count < self.numParticles:
+            for legalPosition in self.legalPositions:
+                if count < self.numParticles:
+                    self.particles.append(legalPosition)
+                    count += 1
+
+
+    def getBeliefDistribution(self):
+        """
+        Return the agent's current belief state, a distribution over ghost
+        locations conditioned on all evidence and time passage. This method
+        essentially converts a list of particles into a belief distribution.
+        """
+        "*** Q5B ***"
+
+        currBeliefState = DiscreteDistribution()
+
+        for particle in self.particles:
+            currBeliefState[particle] += 1
+
+        currBeliefState.normalize()
+
+        return currBeliefState
+
 
     def observeUpdate(self, observation, gameState):
         """
@@ -398,22 +424,19 @@ class ParticleFilter(InferenceModule):
         be reinitialized by calling initializeUniformly. The total method of
         the DiscreteDistribution may be useful.
         """
-        "*** YOUR CODE HERE ***"
+    
+        "*** Q6 ***"
+
+
+        
 
     def elapseTime(self, gameState):
         """
         Sample each particle's next state based on its current state and the
         gameState.
         """
-        "*** YOUR CODE HERE ***"
+        "*** Q7 ***"
 
-    def getBeliefDistribution(self):
-        """
-        Return the agent's current belief state, a distribution over ghost
-        locations conditioned on all evidence and time passage. This method
-        essentially converts a list of particles into a belief distribution.
-        """
-        "*** YOUR CODE HERE ***"
 
 
 class JointParticleFilter(ParticleFilter):
