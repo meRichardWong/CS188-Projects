@@ -427,8 +427,34 @@ class ParticleFilter(InferenceModule):
     
         "*** Q6 ***"
 
+        pacmanPosition = gameState.getPacmanPosition()
+        jailPosition = self.getJailPosition()
 
-        
+
+        discWeights = DiscreteDistribution()
+
+        for particle in self.particles:
+            obsProb = self.getObservationProb(observation, pacmanPosition, particle, jailPosition)
+            
+            if particle in discWeights:
+                discWeights[particle] += obsProb
+            else:
+                discWeights[particle] = obsProb
+
+        discWeights.normalize()
+
+
+        #SPECIAL CASE: When all particles receive 0 weight, the list of particles is 
+        #re-initialized by calling initializeUniformly
+        if discWeights.total() == 0:
+            self.initializeUniformly(gameState)
+
+        else:
+            for x in xrange(self.numParticles):
+                self.particles[x] = discWeights.sample()
+
+
+
 
     def elapseTime(self, gameState):
         """
@@ -436,6 +462,16 @@ class ParticleFilter(InferenceModule):
         gameState.
         """
         "*** Q7 ***"
+
+        nextStateParticles = []
+
+        for particle in self.particles:
+            #particle is an old position
+            newPosDist = self.getPositionDistribution(gameState, particle)
+            sampleNewPosDist = newPosDist.sample()
+            nextStateParticles.append(sampleNewPosDist)
+
+        self.particles = nextStateParticles
 
 
 
