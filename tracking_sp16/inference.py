@@ -496,10 +496,22 @@ class JointParticleFilter(ParticleFilter):
         """
         Initialize particles to be consistent with a uniform prior. Particles
         should be evenly distributed across positions in order to ensure a
-        uniform prior.
+        uniform prior. 
         """
+        "*** Q8 ***"
+
         self.particles = []
-        "*** YOUR CODE HERE ***"
+        legal = self.legalPositions
+        legalPartPositions = itertools.product(legal, repeat=self.numGhosts)
+
+        permutationsList = []
+        for legalPart in legalPartPositions:
+            permutationsList.append(legalPart)
+
+        for x in xrange(self.numParticles):
+            permutated = permutationsList[x % len(permutationsList)]
+            self.particles.append(permutated)
+
 
     def addGhostAgent(self, agent):
         """
@@ -531,7 +543,39 @@ class JointParticleFilter(ParticleFilter):
         be reinitialized by calling initializeUniformly. The total method of
         the DiscreteDistribution may be useful.
         """
-        "*** YOUR CODE HERE ***"
+        "*** Q9 ***"
+
+        discWeights = DiscreteDistribution()
+
+        for particle in self.particles:
+            prob = 1.0
+
+            #iterates through multiple ghosts 
+            for x in range (self.numGhosts):
+                ghostDistance = observation[x]
+                pacmanPosition = gameState.getPacmanPosition()
+                jailPosition = self.getJailPosition(x)
+
+                obsProb = self.getObservationProb(ghostDistance, pacmanPosition, particle[x], jailPosition)
+
+                prob *= obsProb
+
+            if particle not in discWeights:
+                discWeights[particle] = prob
+            else:
+                discWeights[particle] += prob
+
+        discWeights.normalize()
+
+        #SPECIAL CASE: When all particles receive 0 weight, the list of particles is 
+        #re-initialized by calling initializeUniformly
+        if discWeights.total() == 0.0:
+            self.initializeUniformly(gameState)
+        else:
+            for x in xrange (self.numParticles):
+                self.particles[x] = discWeights.sample()
+
+
 
     def elapseTime(self, gameState):
         """
@@ -539,11 +583,15 @@ class JointParticleFilter(ParticleFilter):
         gameState.
         """
         newParticles = []
-        for oldParticle in self.particles:
-            newParticle = list(oldParticle)  # A list of ghost positions
+        for prevGhostPositions in self.particles:
+            newParticle = list(prevGhostPositions)  # A list of ghost positions
 
             # now loop through and update each entry in newParticle...
-            "*** YOUR CODE HERE ***"
+            "*** Q10 ***"
+
+            for x in range(self.numGhosts):
+                newPosDist = self.getPositionDistribution(gameState, prevGhostPositions, x, self.ghostAgents[x])
+                newParticle[x] = newPosDist.sample()
 
             """*** END YOUR CODE HERE ***"""
             newParticles.append(tuple(newParticle))
